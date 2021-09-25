@@ -36,7 +36,8 @@ def allPartsHelper(data, output):
 def partDFindPosition(roomEntry):
     grid = [row[:] for row in roomEntry["grid"]]
     position = findStartingPosition(grid)
-    startingRow, startingCol = position
+    if not gridContainsHealthyPerson(grid):
+        return 0
     visited = [[float("inf") for _ in range(len(grid[0]))] for _ in range(len(grid))]
     calculateEnergyNeeded(position, grid, visited)
     maxEnergy = float("-inf")
@@ -44,6 +45,14 @@ def partDFindPosition(roomEntry):
         for col in range(len(grid[0])):
             maxEnergy = max(maxEnergy, visited[row][col])
     return maxEnergy
+
+
+def gridContainsHealthyPerson(grid):
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] == 1:
+                return True
+    return False
 
 
 def calculateEnergyNeeded(position, grid, visited):
@@ -80,29 +89,35 @@ def getNeighboursWithEnergy(row, col, energy, currentValue):
 def partBAndCFindPosition(roomEntry, partB):
     grid = [row[:] for row in roomEntry["grid"]]
     position = findStartingPosition(grid)
-    visited = set()
-    timeTaken = partBAndCFindInfectedPeople(position, grid, visited, partB)
+    answer = 0
+    visited = {}
+    partBAndCFindInfectedPeople(position, grid, visited, partB)
     # check if there are healthy people still inside
     for row in range(len(grid)):
         for col in range(len(grid[0])):
             if grid[row][col] == 1:  # this guy could not be reached
                 return -1
-    return timeTaken
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] == 3:
+                answer = max(answer, visited[(row, col)])
+    return answer
 
 
 def partBAndCFindInfectedPeople(position, grid, visited, partB):
-    timeTaken = 0
     startingRow, startingCol = position
     queue = [(startingRow, startingCol, 0)]
     while queue:
         currentPerson = queue.pop()  # use bfs
         row, col, steps = currentPerson
-        if row >= len(grid) or row < 0 or col >= len(grid[0]) or col < 0 or (row, col) in visited:
+        if row >= len(grid) or row < 0 or col >= len(grid[0]) or col < 0:
             continue
-        visited.add((row, col))
-        if grid[row][col] == 0 or grid[row][col] == 2:
+        if grid[row][col] == 0 or grid[row][col] == 2:  # empty space or vacc person
+            visited[(row, col)] = float("-inf")
             continue
-        timeTaken = max(steps, timeTaken)
+        if (row, col) in visited and steps >= visited[(row, col)]:  # been visited before and no need to visit again
+            continue
+        visited[(row, col)] = steps
         grid[row][col] = 3
         if partB:
             neighbours = getNeighbours(row, col, steps)
@@ -110,7 +125,6 @@ def partBAndCFindInfectedPeople(position, grid, visited, partB):
             neighbours = getDiagonalNeighbours(row, col, steps)
         for neighbour in neighbours:
             queue.append(neighbour)
-    return timeTaken
 
 
 def partAFindPosition(roomEntry):
