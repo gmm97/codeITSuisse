@@ -36,8 +36,6 @@ def solveCase(s, caseOutput):
 
 
 def solveCaseHelper(s, caseOutput, score, leftPoint, rightPoint, beginIdx, isChar):
-    if beginIdx == 7:
-        print(s, leftPoint, rightPoint, score)
     if not s:
         updateScore(caseOutput, score, beginIdx)
         return
@@ -63,13 +61,15 @@ def updateScore(caseOutput, score, beginIdx):
 def findPossibleBlastPoints(s):
     pointsList = []
     for i in range(1, len(s) - 1):  # except for the first and last index
-        if s[i] == s[i + 1] and s[i] == s[i - 1]:
+        if s[i - 1] == s[i + 1]:
             pointsList.append(i)
     return pointsList
 
 
 def calculateBlastPointsAndReturnString(s, leftPoint, rightPoint, isChar):
     rightSame = leftSame = 0
+    if isChar and s[leftPoint] != s[leftPoint + 1]:  # the 2 sides are different from the middle
+        return s[: leftPoint + 1] + s[rightPoint:], 1, leftPoint, leftPoint + 1
     if s[leftPoint] != s[rightPoint]:  # cannot destroy any more
         return None, 0, None, None
     for i in range(rightPoint, len(s)):
