@@ -91,6 +91,8 @@ def partBAndCFindPosition(roomEntry, partB):
     position = findStartingPosition(grid)
     answer = 0
     visited = {}
+    if not gridContainsHealthyPerson(grid):
+        return 0
     partBAndCFindInfectedPeople(position, grid, visited, partB)
     # check if there are healthy people still inside
     for row in range(len(grid)):
