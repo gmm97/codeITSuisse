@@ -14,7 +14,7 @@ def checkIfCanFindProfit():
     logging.info("data sent for evaluation {}".format(data))
     output = []
     allPartsHelper(data, output)
-    return json.dumps(output)
+    return json.dumps(output), {"Content-Type": "application/json"}
 
 
 def allPartsHelper(data, output):
@@ -88,6 +88,7 @@ def testCaseHandler(currentTestCase):
         stockName = purchasedStock
         transactions.append([buyYear, oppositeDirection, quantity, stockName, True])  # last field true for buying
         transactions.append([sellYear, oppositeDirection, quantity, stockName, False])  # last field for buying
+
     backwardTransactions = list(filter(lambda transaction: transaction[1] == True, transactions))
     backwardTransactions.sort(key=lambda x: -x[0])  # sort based on year decreasing
     forwardTransactions = list(filter(lambda transaction: transaction[1] == False, transactions))
