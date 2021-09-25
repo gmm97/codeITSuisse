@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 @app.route("/parasite", methods=["POST"])
 def resolve():
     data = request.get_json()
-    # logging.info("data sent for evaluation {}".format(data))
+    logging.info("data sent for evaluation {}".format(data))
     output = []
     allPartsHelper(data, output)
     return json.dumps(output)
