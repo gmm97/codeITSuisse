@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.route("/cipher-cracking", methods=["POST"])
-def thisBetterWork():
+def please():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     output = []
