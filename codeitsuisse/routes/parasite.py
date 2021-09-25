@@ -25,11 +25,11 @@ def allPartsHelper(data, output):
         # part one logic
         currentRoomOutput["p1"] = partAFindPosition(currentRoom)
         # part two logic
-        currentRoomOutput["p2"] = partBAndCFindPosition(currentRoom, True)
+        # currentRoomOutput["p2"] = partBAndCFindPosition(currentRoom, True)
         # part three logic
-        currentRoomOutput["p3"] = partBAndCFindPosition(currentRoom, False)
+        # currentRoomOutput["p3"] = partBAndCFindPosition(currentRoom, False)
         # part four logic
-        currentRoomOutput["p4"] = partDFindPosition(currentRoom)
+        # currentRoomOutput["p4"] = partDFindPosition(currentRoom)
         output.append(currentRoomOutput)
 
 
