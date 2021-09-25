@@ -36,6 +36,8 @@ def solveCase(s, caseOutput):
 
 
 def solveCaseHelper(s, caseOutput, score, leftPoint, rightPoint, beginIdx, isChar):
+    if beginIdx == 8:
+        print(s, leftPoint, rightPoint, score)
     if not s:
         updateScore(caseOutput, score, beginIdx)
         return
@@ -54,8 +56,8 @@ def solveCaseHelper(s, caseOutput, score, leftPoint, rightPoint, beginIdx, isCha
 
 def updateScore(caseOutput, score, beginIdx):
     if score > caseOutput["score"]:
-        caseOutput["score"] = int(score)
-        caseOutput["origin"] = int(beginIdx)
+        caseOutput["score"] = score
+        caseOutput["origin"] = beginIdx
 
 
 def findPossibleBlastPoints(s):
