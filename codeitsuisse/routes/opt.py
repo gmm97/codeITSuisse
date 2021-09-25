@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.route("/optopt", methods=["POST"])
-def resolve():
+def complete():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     output = []
