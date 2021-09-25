@@ -139,7 +139,7 @@ def partAFindPosition(roomEntry):
         personEntry = person.split(",")
         personRow, personCol = int(personEntry[0]), int(personEntry[1])
         interestedIndividualsDict[(personRow, personCol)] = -1
-    visited = set()
+    visited = {}
     partAFindInfectedPeople(position, grid, interestedIndividualsDict, visited)
     for key, value in interestedIndividualsDict.items():
         row, col = key
@@ -154,13 +154,15 @@ def partAFindInfectedPeople(position, grid, interestedIndividualsDict, visited):
     while queue:
         currentPerson = queue.pop()  # use bfs
         row, col, steps = currentPerson
-        if (row, col) in visited or row >= len(grid) or row < 0 or col >= len(grid[0]) or col < 0:
+        if row >= len(grid) or row < 0 or col >= len(grid[0]) or col < 0:
             continue
-        visited.add((row, col))
         if grid[row][col] == 2 or grid[row][col] == 0:
             continue
+        if (row, col) in visited and steps >= visited[(row, col)]:  # been visited before and no need to visit again
+            continue
+        visited[(row, col)] = steps
         if (row, col) in interestedIndividualsDict:
-            interestedIndividualsDict[(row, col)] = steps if grid[row][col] != 3 else -1
+            interestedIndividualsDict[(row, col)] = visited[(row, col)] if grid[row][col] != 3 else -1
         neighbours = getNeighbours(row, col, steps)
         for neighbour in neighbours:
             queue.append(neighbour)
