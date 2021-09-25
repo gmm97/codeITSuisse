@@ -44,7 +44,7 @@ def partDFindPosition(roomEntry):
     for row in range(len(grid)):
         for col in range(len(grid[0])):
             if grid[row][col] == 1:
-                energy = max(energy, visited[row][col])
+                energy += visited[row][col]
     print(energy, visited)
     return energy
 
@@ -79,33 +79,32 @@ def calculateEnergyNeeded(position, grid, visited):
 def getNeighboursWithEnergy(row, col, energy, grid):
     neighbours = []
     if row < len(grid) - 1:
-        # at zero going somewhere else
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row + 1, col, energy))
-        elif grid[row + 1][col] == 0 or grid[row + 1][col] == 2:
+        # if grid[row][col] == 0 or grid[row][col] == 2:
+        #    neighbours.append((row + 1, col, energy))
+        if grid[row + 1][col] == 0 or grid[row + 1][col] == 2:
             neighbours.append((row + 1, col, energy + 1))
         else:
             neighbours.append((row + 1, col, energy))
     if row > 0:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row - 1, col, energy))
-        elif grid[row - 1][col] == 0 or grid[row - 1][col] == 2:
+        # if grid[row][col] == 0 or grid[row][col] == 2:
+        #    neighbours.append((row - 1, col, energy))
+        if grid[row - 1][col] == 0 or grid[row - 1][col] == 2:
             neighbours.append((row - 1, col, energy + 1))
         else:
             neighbours.append((row - 1, col, energy))
 
     if col < len(grid[0]) - 1:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row, col + 1, energy))
-        elif grid[row][col + 1] == 0 or grid[row][col + 1] == 2:
+        # if grid[row][col] == 0 or grid[row][col] == 2:
+        #    neighbours.append((row, col + 1, energy))
+        if grid[row][col + 1] == 0 or grid[row][col + 1] == 2:
             neighbours.append((row, col + 1, energy + 1))
         else:
             neighbours.append((row, col + 1, energy))
 
     if col > 0:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row, col - 1, energy))
-        elif grid[row][col - 1] == 0 or grid[row][col - 1] == 2:
+        # if grid[row][col] == 0 or grid[row][col] == 2:
+        #    neighbours.append((row, col - 1, energy))
+        if grid[row][col - 1] == 0 or grid[row][col - 1] == 2:
             neighbours.append((row, col - 1, energy + 1))
         else:
             neighbours.append((row, col - 1, energy))
