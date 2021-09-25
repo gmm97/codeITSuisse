@@ -5,3 +5,4 @@ import codeitsuisse.routes.square
 import codeitsuisse.routes.parasite
 import codeitsuisse.routes.opt
 import codeitsuisse.routes.asteroid
+import codeitsuisse.routes.stockhunter

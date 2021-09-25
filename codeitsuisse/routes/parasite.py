@@ -39,13 +39,28 @@ def partDFindPosition(roomEntry):
     position = findStartingPosition(grid)
     if not gridContainsHealthyPerson(grid):
         return 0
-    visited = [[float("inf") for _ in range(len(grid[0]))] for _ in range(len(grid))]
-    calculateEnergyNeeded(position, grid, visited)
-    for row in range(len(grid)):
-        for col in range(len(grid[0])):
-            if grid[row][col] == 1:
-                energy += visited[row][col]
-    return energy
+    numberOnes = findNumberofOnes(grid)
+    boundaries = []
+    remainingOnes, visitedOnes = getBoundaryRegions(boundaries, grid, position, numberOnes)
+    if remainingOnes == 0:
+        return 0
+    steps = 0
+    while boundaries:
+        new = []
+        for i, j in boundaries:
+            for x, y in ((i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)):
+                if 0 <= x < len(grid) and 0 <= y < len(grid[0]):
+                    if grid[x][y] == 1 and (x, y) not in visitedOnes:
+                        remainingOnes -= 1
+                        visitedOnes[(x, y)] = True
+                        new.append((x, y))
+                    elif grid[x][y] == 0 or grid[x][y] == 2:
+                        new.append((x, y))
+            if remainingOnes == 0:
+                return steps
+            print(boundaries)
+            steps += 1
+            boundaries = new
 
 
 def gridContainsHealthyPerson(grid):
@@ -56,59 +71,27 @@ def gridContainsHealthyPerson(grid):
     return False
 
 
-def calculateEnergyNeeded(position, grid, visited):
-    startingRow, startingCol = position
-    queue = [(startingRow, startingCol, 0)]  # the final is energy not time
-    while queue:
-        currentPerson = queue.pop()
-        row, col, energy = currentPerson
+def getBoundaryRegions(boundaries, grid, position, numberOnes):
+    visited = [[False for _ in range(len(grid[0]))] for _ in range(len(grid))]
+    visitedOnes = {}
+    stack = [position]
+    while stack:
+        row, col = stack.pop()
         if row >= len(grid) or row < 0 or col >= len(grid[0]) or col < 0:
             continue
-        currentEnergyAtPosition = visited[row][col]
-        if (
-            energy >= currentEnergyAtPosition
-        ):  # the cell i am at now has either not been visited or it has been visited but with higher energy
+        if visited[row][col]:
             continue
-        visited[row][col] = energy
-        neighbours = getNeighboursWithEnergy(row, col, energy, grid)
+        visited[row][col] = True
+        if grid[row][col] == 0 or grid[row][col] == 2:
+            continue
+        if grid[row][col] == 1:
+            numberOnes -= 1
+            visitedOnes[(row, col)] = True
+        boundaries.append((row, col))
+        neighbours = getNeighboursNoSteps(row, col)
         for n in neighbours:
-            queue.append(n)
-
-
-def getNeighboursWithEnergy(row, col, energy, grid):
-    neighbours = []
-    if row < len(grid) - 1:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row + 1, col, energy))
-        if grid[row + 1][col] == 0 or grid[row + 1][col] == 2:
-            neighbours.append((row + 1, col, energy + 1))
-        else:
-            neighbours.append((row + 1, col, energy))
-    if row > 0:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row - 1, col, energy))
-        if grid[row - 1][col] == 0 or grid[row - 1][col] == 2:
-            neighbours.append((row - 1, col, energy + 1))
-        else:
-            neighbours.append((row - 1, col, energy))
-
-    if col < len(grid[0]) - 1:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row, col + 1, energy))
-        if grid[row][col + 1] == 0 or grid[row][col + 1] == 2:
-            neighbours.append((row, col + 1, energy + 1))
-        else:
-            neighbours.append((row, col + 1, energy))
-
-    if col > 0:
-        if grid[row][col] == 0 or grid[row][col] == 2:
-            neighbours.append((row, col - 1, energy))
-        if grid[row][col - 1] == 0 or grid[row][col - 1] == 2:
-            neighbours.append((row, col - 1, energy + 1))
-        else:
-            neighbours.append((row, col - 1, energy))
-
-    return neighbours
+            stack.append(n)
+    return numberOnes, visitedOnes
 
 
 def partBAndCFindPosition(roomEntry, partB):
@@ -193,6 +176,15 @@ def partAFindInfectedPeople(position, grid, interestedIndividualsDict, visited):
             queue.append(neighbour)
 
 
+def getNeighboursNoSteps(row, col):
+    neighbours = []
+    neighbours.append((row - 1, col))
+    neighbours.append((row + 1, col))
+    neighbours.append((row, col + 1))
+    neighbours.append((row, col - 1))
+    return neighbours
+
+
 def getNeighbours(row, col, steps):
     neighbours = []
     neighbours.append((row - 1, col, steps + 1))
@@ -222,3 +214,58 @@ def findStartingPosition(grid):
             if grid[row][col] == 3:
                 position = (row, col)
     return position
+
+
+def findNumberofOnes(grid):
+    count = 0
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] == 1:
+                count += 1
+    return count
+
+
+# def calculateEnergyNeeded(position, grid, visited):
+#     startingRow, startingCol = position
+#     queue = [(startingRow, startingCol, 0)]  # the final is energy not time
+#     while queue:
+#         currentPerson = queue.pop()
+#         row, col, energy = currentPerson
+#         if row >= len(grid) or row < 0 or col >= len(grid[0]) or col < 0:
+#             continue
+#         currentEnergyAtPosition = visited[row][col]
+#         if (
+#             energy >= currentEnergyAtPosition
+#         ):  # the cell i am at now has either not been visited or it has been visited but with higher energy
+#             continue
+#         visited[row][col] = energy
+#         neighbours = getNeighboursWithEnergy(row, col, energy, grid)
+#         for n in neighbours:
+#             queue.append(n)
+
+# def getNeighboursWithEnergy(row, col, energy, grid):
+#     neighbours = []
+#     if row < len(grid) - 1:
+#         if grid[row + 1][col] == 0 or grid[row + 1][col] == 2:
+#             neighbours.append((row + 1, col, energy + 1))
+#         else:
+#             neighbours.append((row + 1, col, energy))
+#     if row > 0:
+#         if grid[row - 1][col] == 0 or grid[row - 1][col] == 2:
+#             neighbours.append((row - 1, col, energy + 1))
+#         else:
+#             neighbours.append((row - 1, col, energy))
+
+#     if col < len(grid[0]) - 1:
+#         if grid[row][col + 1] == 0 or grid[row][col + 1] == 2:
+#             neighbours.append((row, col + 1, energy + 1))
+#         else:
+#             neighbours.append((row, col + 1, energy))
+
+#     if col > 0:
+#         if grid[row][col - 1] == 0 or grid[row][col - 1] == 2:
+#             neighbours.append((row, col - 1, energy + 1))
+#         else:
+#             neighbours.append((row, col - 1, energy))
+
+#     return neighbours
