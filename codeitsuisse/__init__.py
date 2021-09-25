@@ -7,3 +7,5 @@ import codeitsuisse.routes.opt
 import codeitsuisse.routes.asteroid
 import codeitsuisse.routes.stockhunter
 import codeitsuisse.routes.stonks
+import codeitsuisse.routes.swissstig
+import codeitsuisse.routes.cipher
